@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode
+from htmlnode import HTMLNode, LeafNode
 
 class TestHTMLNode(unittest.TestCase):
     """
@@ -51,3 +51,22 @@ class TestHTMLNode(unittest.TestCase):
         self.assertEqual(
             node_many_props.props_to_html(), "href=\"www.google.com\" target=\"_blank\" css=\"styles.css\""
         )
+
+class TestLeafNode(unittest.TestCase):
+    """
+    Unit tests for LeafNode
+    """
+    
+    def test_to_html(self) -> None:
+        """
+        Tests for the LeafNode implementation of the `to_html` method.
+        """
+        node_no_value: LeafNode = LeafNode("h1", None)
+        node_no_tag: LeafNode = LeafNode(None, "Hello World")
+        node_basic_paragraph: LeafNode = LeafNode("p", "This is a paragraph of text.")
+        node_basic_link: LeafNode = LeafNode("a", "Click me!", {"href": "https://www.google.com"})
+
+        self.assertRaises(ValueError,node_no_value.to_html)
+        self.assertEqual(node_no_tag.to_html(), "Hello World")
+        self.assertEqual(node_basic_paragraph.to_html(), "<p>This is a paragraph of text.</p>")
+        self.assertEqual(node_basic_link.to_html(), "<a href=\"https://www.google.com\">Click me!</a>")
