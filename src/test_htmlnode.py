@@ -57,6 +57,16 @@ class TestLeafNode(unittest.TestCase):
     Unit tests for LeafNode
     """
     
+    def test_instances(self) -> None:
+        """
+        Tests if the `__repr__` method returns the correct string represenation.
+        """
+        node_no_props: LeafNode = LeafNode("p", "Hello World")
+        node_with_prop: LeafNode = LeafNode("p", "Hello World", {"style": "styles.css"})
+
+        self.assertEqual(repr(node_no_props), "LeafNode(p, Hello World, None)")
+        self.assertEqual(repr(node_with_prop), "LeafNode(p, Hello World, {'style': 'styles.css'})")
+    
     def test_to_html(self) -> None:
         """
         Tests for the LeafNode implementation of the `to_html` method.

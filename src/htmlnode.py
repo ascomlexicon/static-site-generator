@@ -89,3 +89,11 @@ class LeafNode(HTMLNode):
         tag_attr = "" if self.props is None else f" {self.props_to_html()}"
         
         return f"<{self.tag}{tag_attr}>{self.value}</{self.tag}>"
+    
+    def __repr__(self) -> str:
+        """
+        Returns the string representation for a LeafNode.
+
+        :return: The LeafNode string representation.
+        """
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
