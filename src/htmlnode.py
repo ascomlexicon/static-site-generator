@@ -107,3 +107,19 @@ class LeafNode(HTMLNode):
         :return: The LeafNode string representation.
         """
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
+    
+
+class ParentNode(HTMLNode):
+    """
+    Represents elements that contain nested elements.
+    """
+    
+    def __init__(self, tag: str, children: list[HTMLNode], props: dict[str, str] = None) -> None:
+        """
+        Instantiates a ParentNode.
+
+        :param tag: The tag of the HTML element.
+        :param children: A list of HTML elements nested within the ParentNode.
+        :param props: Key-value pairs for attributes (with their values) for a HTML tag.
+        """
+        super().__init__(tag=tag, children=children, props=props)
