@@ -5,7 +5,6 @@ class TextType(Enum):
     Holds the different types of inline text formatting within a Markdown
     document.
     """
-
     NORMAL: str = "normal"
     BOLD: str = "bold"
     ITALIC: str = "italic"
@@ -17,7 +16,7 @@ class TextNode:
     """
     Holds information about a block of text within a Markdown document.
     """
-    
+
     def __init__(self, text: str, text_type: TextType, url: str = None) -> None:
         """
         Instantiates a TextNode object.
@@ -26,7 +25,6 @@ class TextNode:
         :param text_type: The formatting style of the text.
         :param url: The URL of a link or image. By default, it is set to None.
         """
-        
         self.text = text
         self.text_type = text_type
         self.url = url
@@ -44,5 +42,4 @@ class TextNode:
         """
         Returns the string representation of the TextNode.
         """
-
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
