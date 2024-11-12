@@ -1,3 +1,12 @@
+"""
+This module contains classes that represent different types of HTML elements
+dependent on whether they contain more HTML elements within them.
+
+HTMLNode is an abstract class that has two children classes: LeafNode (for 
+elements that do not have nested elements), and ParentNode (elements containing
+nested elements).
+"""
+
 class HTMLNode:
     """
     Represents elements (with their contents) in a HTML document tree to render
@@ -56,6 +65,7 @@ class HTMLNode:
         :return: The HTMLNode's string representation.
         """
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
+
 
 class LeafNode(HTMLNode):
     """

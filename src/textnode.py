@@ -1,3 +1,11 @@
+"""
+This modules contains classes that represent inline Markdown elements.
+
+The TextType class is an Enum that stores the different Markdown formatting
+styles/inline elements.
+
+TextNode is a class that holds information about a chunk of Markdown.
+"""
 from enum import Enum
 
 class TextType(Enum):
