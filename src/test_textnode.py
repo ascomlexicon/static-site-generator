@@ -6,7 +6,10 @@ class TestTextNode(unittest.TestCase):
     Unit tests for the TextNode object.
     """
     
-    def test_equality(self):
+    def test_equality(self) -> None:
+        """
+        Tests to check if the equality operator is functioning correctly.
+        """
         control_node: TextNode = TextNode("test string", TextType.CODE, "www.google.com")
         
         same_node: TextNode = TextNode("test string", TextType.CODE, "www.google.com")
