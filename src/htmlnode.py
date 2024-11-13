@@ -123,3 +123,32 @@ class ParentNode(HTMLNode):
         :param props: Key-value pairs for attributes (with their values) for a HTML tag.
         """
         super().__init__(tag=tag, children=children, props=props)
+        
+    def to_html(self) -> str:
+        """
+        Converts a the ParentNode (along with its children) into HTML.
+        The resulting string will be a single line (not pretty printed).
+
+        :return: The string holding the rendered HTML.
+        """
+        if self.tag is None:
+            raise ValueError("This node has no tag!")
+        elif not self.children:
+            raise ValueError("The ParentNode must have children.")
+        
+        html: str = f"<{self.tag}{'' if self.props is None else f' {self.props_to_html()}'}>"
+        
+        for child in self.children:
+            html += child.to_html()
+
+        html += f"</{self.tag}>"
+        
+        return html
+    
+    def __repr__(self) -> str:
+        """
+        Returns a string representation for a ParentNode.
+
+        :return: ParentNode string representation.
+        """
+        return f"ParentNode({self.tag}, {self.children}, {self.props})"
