@@ -79,4 +79,4 @@ def text_node_to_html_node(text_node: TextNode) -> LeafNode:
         case TextType.IMAGE:
             return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
         case _:
-            raise Exception("Not a valid TextType value.")
+            raise ValueError(f"'{text_node.text_type}' is not a valid TextType value.")

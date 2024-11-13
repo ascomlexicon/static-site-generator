@@ -37,7 +37,7 @@ class TestTextNode(unittest.TestCase):
         image: TextNode = TextNode("this is an image", TextType.IMAGE, "www.image.com")
         fake_node: TextNode = TextNode("This should not work", "fake")
         
-        self.assertRaises(Exception, text_node_to_html_node, fake_node)
+        self.assertRaises(ValueError, text_node_to_html_node, fake_node)
         self.assertEqual(
             repr(text_node_to_html_node(normal_text)),
             "LeafNode(None, test, None)"
