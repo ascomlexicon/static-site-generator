@@ -1,5 +1,5 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     """
@@ -80,3 +80,97 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node_no_tag.to_html(), "Hello World")
         self.assertEqual(node_basic_paragraph.to_html(), "<p>This is a paragraph of text.</p>")
         self.assertEqual(node_basic_link.to_html(), "<a href=\"https://www.google.com\">Click me!</a>")
+
+
+class TestParentNode(unittest.TestCase):
+    """
+    Unit tests for ParentNode
+    """
+    
+    def test_instances(self) -> None:
+        """
+        Checks to see if the `__repr__` dunder method produces the correct string.
+        """
+        node_none_children: ParentNode = ParentNode("a", None)
+        node_empty_children: ParentNode = ParentNode("a", [])
+        node_leaf_children: ParentNode = ParentNode("a", [LeafNode("b", "C1"), LeafNode("p", "C2")])
+        node_parent_children: ParentNode = ParentNode("a", [node_leaf_children, ParentNode("b", [LeafNode("p", "C3")])])
+
+        self.assertEqual(repr(node_none_children), "ParentNode(a, None, None)")
+        self.assertEqual(repr(node_empty_children), "ParentNode(a, [], None)")
+        self.assertEqual(
+            repr(node_leaf_children), "ParentNode(a, [LeafNode(b, C1, None), LeafNode(p, C2, None)], None)"
+        )
+        self.assertEqual(
+            repr(node_parent_children),
+            "ParentNode(a, [ParentNode(a, [LeafNode(b, C1, None), LeafNode(p, C2, None)], None), ParentNode(b, [LeafNode(p, C3, None)], None)], None)"
+        )
+        
+    def test_to_html_exceptions(self) -> None:
+        """
+        Test to check the different exceptions for the `to_html` method.
+        """
+        node_no_tag: ParentNode = ParentNode(None, [LeafNode(None, "value")])
+        node_no_children: ParentNode = ParentNode("a", None)
+        node_empty_children: ParentNode = ParentNode("a", [])
+        
+        # Test for error messages
+        with self.assertRaises(ValueError) as e_no_tag:
+            node_no_tag.to_html()
+        self.assertEqual(str(e_no_tag.exception), "This node has no tag!")
+        
+        with self.assertRaises(ValueError) as e_no_children:
+            node_no_children.to_html()
+        self.assertEqual(str(e_no_children.exception), "The ParentNode must have children.")
+
+        with self.assertRaises(ValueError) as e_empty_children:
+            node_empty_children.to_html()
+        self.assertEqual(str(e_empty_children.exception), "The ParentNode must have children.")
+
+    def test_to_html_cases(self) -> None:
+        """
+        A unit test to check different edge cases for the `to_html` method.
+        """
+        node_leaf_children: ParentNode = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ]
+        )
+        node_parent_children: ParentNode = ParentNode(
+            "p",
+            [
+                LeafNode(None, "I really like "),
+                ParentNode("b", [LeafNode("i", "bold-italic")]),
+                LeafNode(None, " text.")
+            ]
+        )
+        node_props: ParentNode = ParentNode(
+            "a",
+            [
+                LeafNode(None, "The "),
+                ParentNode("i", [ParentNode("b", [LeafNode(None, "Google")], {"style": "styles.css"})]),
+                LeafNode(None, " Homepage")
+            ],
+            {
+                "href": "www.google.com"
+            }
+        )
+        
+        self.assertEqual(
+            node_leaf_children.to_html(), "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+        )
+        self.assertEqual(
+            node_leaf_children.to_html(), "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+        )
+        self.assertEqual(
+            node_parent_children.to_html(), "<p>I really like <b><i>bold-italic</i></b> text.</p>"
+        )
+        self.assertEqual(
+            node_props.to_html(),
+            "<a href=\"www.google.com\">The <i><b style=\"styles.css\">Google</b></i> Homepage</a>"
+        )
+ 
