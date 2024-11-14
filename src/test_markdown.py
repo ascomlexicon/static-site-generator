@@ -4,7 +4,7 @@ This module is a test suite for Markdown parsing functions.
 import unittest
 from typing import Tuple
 from textnode import TextNode, TextType
-from markdown import split_node_delimiter, extract_markdown_images, extract_markdown_links
+from markdown import split_node_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_images, split_nodes_link
 
 class TestMarkdownParsing(unittest.TestCase):
     """
@@ -110,4 +110,78 @@ class TestMarkdownParsing(unittest.TestCase):
         self.assertEqual(
             extract_markdown_links(normal_md),
             [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
+        )
+        
+    def test_split_images(self) -> None:
+        """
+        Tests to see if parsing TextNodes for images is a successful operation.
+        """
+        no_nodes: list[TextNode] = split_nodes_images(None)
+        empty_nodes: list[TextNode] = split_nodes_images([])
+        
+        no_text: list[TextNode] = split_nodes_images(
+            [TextNode("![image](www.image.com)", TextType.ITALIC)]
+        )
+        no_image: list[TextNode] = split_nodes_images(
+            [
+                TextNode("This node has no images", TextType.TEXT),
+                TextNode("Neither does this node", TextType.TEXT)
+            ]
+        )
+        
+        single_image: list[TextNode] = split_nodes_images(
+            [
+                TextNode("This node has an image ![image](www.image.com).", TextType.TEXT)
+            ]
+        )
+        multiple_images: list[TextNode] = split_nodes_images(
+            [
+                TextNode("This nodes has an image ![image](www.image.com).", TextType.TEXT),
+                TextNode("I have image 1, ![image1](www.image1.com), and image 2, ![image2](www.image2.com), here.", TextType.TEXT)
+            ]
+        )
+        start_end_image: list[TextNode] = split_nodes_images(
+            [
+                TextNode("![image_start](www.image-start.com) and ![image_end](www.image-end.com)", TextType.TEXT)
+            ]
+        )
+        
+        self.assertEqual(no_nodes, [])
+        self.assertEqual(empty_nodes, [])
+        self.assertEqual(no_text, [TextNode("![image](www.image.com)", TextType.ITALIC)])
+        self.assertEqual(
+            no_image,
+            [
+                TextNode("This node has no images", TextType.TEXT),
+                TextNode("Neither does this node", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            single_image,
+            [
+                TextNode("This node has an image ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "www.image.com"),
+                TextNode(".", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            multiple_images,
+            [
+                TextNode("This node has an image ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "www.image.com"),
+                TextNode(".", TextType.TEXT),
+                TextNode("I have image 1, ", TextType.TEXT),
+                TextNode("image1", TextType.IMAGE, "www.image1.com"),
+                TextNode(", and image 2, ", TextType.TEXT),
+                TextNode("image2", TextType.IMAGE, "www.image2.com"),
+                TextNode(", here.", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            start_end_image,
+            [
+                TextNode("image_start", TextType.IMAGE, "www.image-start.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("image_end", TextType.IMAGE, "www.image-end.com")
+            ]
         )
