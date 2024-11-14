@@ -14,6 +14,9 @@ def split_node_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: T
     :return: A list of TextNode as a result of parsing with a delimiter.
     :raise: ValueError in the cases where the delimiter is not closed.
     """
+    if old_nodes is None:
+        return []
+
     parsed_nodes: list[TextNode] = []
     
     for node in old_nodes:

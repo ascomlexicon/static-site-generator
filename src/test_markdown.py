@@ -70,7 +70,7 @@ class TestMarkdownParsing(unittest.TestCase):
             [
                 TextNode("Hello", TextType.ITALIC),
                 TextNode(" World", TextType.TEXT),
-                TextType("Goodbye ", TextType.TEXT),
+                TextNode("Goodbye ", TextType.TEXT),
                 TextNode("World", TextType.ITALIC)
             ]
         )
