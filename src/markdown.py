@@ -1,6 +1,7 @@
 """
 This module contains functions that parses markdown files.
 """
+import re
 from textnode import TextNode, TextType
 
 def split_node_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
@@ -38,3 +39,21 @@ def split_node_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: T
                 parsed_nodes.append(TextNode(text, text_type))
                 
     return parsed_nodes
+
+def extract_markdown_images(raw_md: str) -> list[tuple[str, str]]:
+    """
+    Takes in a string of raw markdown and parses it for image links.
+    
+    :param raw_md: The Markdown text to parse.
+    :return: A list of tuples containing the alt text and image source.
+    """
+    return re.findall(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)", raw_md)
+
+def extract_markdown_links(raw_md: str) -> list[tuple[str, str]]:
+    """
+    Takes in a string representing Markdown, and parses it for links.
+
+    :param raw_md: The raw Markdown text to parse.
+    :return: A list of tuples holding the alt text and link.
+    """
+    return re.findall(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)", raw_md)
