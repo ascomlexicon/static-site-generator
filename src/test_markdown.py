@@ -136,7 +136,7 @@ class TestMarkdownParsing(unittest.TestCase):
         )
         multiple_images: list[TextNode] = split_nodes_images(
             [
-                TextNode("This nodes has an image ![image](www.image.com).", TextType.TEXT),
+                TextNode("This node has an image ![image](www.image.com).", TextType.TEXT),
                 TextNode("I have image 1, ![image1](www.image1.com), and image 2, ![image2](www.image2.com), here.", TextType.TEXT)
             ]
         )
