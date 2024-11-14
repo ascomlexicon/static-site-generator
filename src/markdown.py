@@ -85,7 +85,48 @@ def split_nodes_images(old_nodes: list[TextNode]) -> list[TextNode]:
     return new_nodes
 
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
-    raise NotImplementedError()
+    """
+    Takes in a list of TextNodes (of TextType.TEXT) and extract the nodes
+    containing standard links. 
+    
+    :param old_nodes: The TextNodes to parse.
+    :return: The list of parsed TextNodes
+    """
+    if old_nodes is None:
+        return []
+    
+    new_nodes: list[TextNode] = []
+    
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        
+        links: list[tuple[str, str]] = extract_markdown_links(node.text)
+
+        if len(links) == 0:
+            new_nodes.append(node)
+            continue
+
+        text_to_parse: str = node.text
+
+        for link in links:
+            alt_text: str = link[0]
+            url: str = link[1]
+            
+            sections: list[str] = text_to_parse.split(f"[{alt_text}]({url})", 1)
+
+            if sections[0]:
+                new_nodes.append(TextNode(sections[0], node.text_type))
+                
+            new_nodes.append(TextNode(alt_text, TextType.LINK, url))
+            
+            text_to_parse = sections[1]
+            
+        if sections[1]:
+            new_nodes.append(TextNode(sections[1], node.text_type))
+            
+    return new_nodes
 
 def extract_markdown_images(raw_md: str) -> list[tuple[str, str]]:
     """

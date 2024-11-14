@@ -185,3 +185,77 @@ class TestMarkdownParsing(unittest.TestCase):
                 TextNode("image_end", TextType.IMAGE, "www.image-end.com")
             ]
         )
+
+    def test_split_links(self) -> None:
+        """
+        Tests to see if parsing TextNodes for links is a successful operation.
+        """
+        no_nodes: list[TextNode] = split_nodes_link(None)
+        empty_nodes: list[TextNode] = split_nodes_link([])
+        
+        no_text: list[TextNode] = split_nodes_link(
+            [TextNode("[link](www.link.com)", TextType.ITALIC)]
+        )
+        no_link: list[TextNode] = split_nodes_link(
+            [
+                TextNode("This node has no links", TextType.TEXT),
+                TextNode("Neither does this node", TextType.TEXT)
+            ]
+        )
+        
+        single_link: list[TextNode] = split_nodes_link(
+            [
+                TextNode("This node has a link [link](www.link.com).", TextType.TEXT)
+            ]
+        )
+        multiple_links: list[TextNode] = split_nodes_link(
+            [
+                TextNode("This node has a link [link](www.link.com).", TextType.TEXT),
+                TextNode("I have link 1, [link1](www.link1.com), and link 2, [link2](www.link2.com), here.", TextType.TEXT)
+            ]
+        )
+        start_end_link: list[TextNode] = split_nodes_link(
+            [
+                TextNode("[link_start](www.link-start.com) and [link_end](www.link-end.com)", TextType.TEXT)
+            ]
+        )
+        
+        self.assertEqual(no_nodes, [])
+        self.assertEqual(empty_nodes, [])
+        self.assertEqual(no_text, [TextNode("[link](www.link.com)", TextType.ITALIC)])
+        self.assertEqual(
+            no_link,
+            [
+                TextNode("This node has no links", TextType.TEXT),
+                TextNode("Neither does this node", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            single_link,
+            [
+                TextNode("This node has a link ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "www.link.com"),
+                TextNode(".", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            multiple_links,
+            [
+                TextNode("This node has a link ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "www.link.com"),
+                TextNode(".", TextType.TEXT),
+                TextNode("I have link 1, ", TextType.TEXT),
+                TextNode("link1", TextType.LINK, "www.link1.com"),
+                TextNode(", and link 2, ", TextType.TEXT),
+                TextNode("link2", TextType.LINK, "www.link2.com"),
+                TextNode(", here.", TextType.TEXT)
+            ]
+        )
+        self.assertEqual(
+            start_end_link,
+            [
+                TextNode("link_start", TextType.LINK, "www.link-start.com"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("link_end", TextType.LINK, "www.link-end.com")
+            ]
+        )
